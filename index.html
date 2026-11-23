@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111714">
+  <title>ORPHEUM — Midnight Siege</title>
+  <meta name="description" content="Ретро-шутер с рисованными спрайтами и настоящим 3D-кинотеатром. Играть в браузере.">
+  <style>
+    :root{color-scheme:dark;--ink:#0b100e;--panel:#161e19;--muted:#a5afa3;--gold:#f5b65d;--line:#3b463a}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#293528 0,#0b100e 70%);color:#e6e5d6;font:15px/1.5 Consolas,'Courier New',monospace;min-height:100vh}button,a{touch-action:manipulation}button{font:700 14px Consolas,'Courier New',monospace;letter-spacing:.08em;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #e6f0c0;outline-offset:4px}.shell{width:min(1180px,96vw);margin:0 auto;padding:30px 0 32px}header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.24em;margin:0 0 5px}h1{font-size:clamp(27px,5vw,44px);line-height:1;margin:0;letter-spacing:.14em}header p{margin:5px 0 0;color:var(--muted);font-size:12px}.badge{color:var(--gold);border:1px solid var(--line);padding:8px 12px;font-size:11px;white-space:nowrap}.viewport{position:relative;aspect-ratio:16/9;border:1px solid #566047;background:#050806;box-shadow:0 18px 80px #0008;overflow:hidden}.viewport:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;border:0;display:grid;place-items:center}.viewport:fullscreen canvas{width:min(100vw,177.77vh);height:min(100vh,56.25vw)}canvas{display:block;width:100%;height:100%;background:#080c0b;image-rendering:pixelated;outline:0}.overlay{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(0deg,#07100be8,#08110bd9),url(cover.png) center/cover}.overlay[hidden]{display:none}.card{width:min(640px,90%);text-align:center;padding:26px 20px;border-top:2px solid var(--gold)}.card .eyebrow{margin-bottom:12px}.card h2{font-size:clamp(22px,4vw,40px);line-height:1.12;margin:0 0 14px;letter-spacing:.06em}.card p{max-width:480px;margin:0 auto 20px;color:#bcc5b7;font-size:13px}.primary{background:var(--gold);color:#172016;border:0;padding:15px 30px;min-width:240px}.primary:disabled{cursor:wait;opacity:.6}.progress{display:block;width:min(360px,95%);height:5px;margin:22px auto 12px;accent-color:var(--gold)}.status{font-size:11px;color:var(--muted);min-height:18px}.toolbar{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);font-size:11px;color:var(--muted)}.secondary{background:transparent;color:var(--gold);border:1px solid var(--line);padding:8px 14px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:24px 0 8px}.controls strong{display:block;font-size:12px;color:#e1d7b7;margin-bottom:3px}.controls span{font-size:11px;color:var(--muted)}footer{display:flex;justify-content:space-between;gap:20px;color:#7e8d7c;font-size:10px;padding-top:24px}.mobile{display:none;color:#d7b279;font-size:11px}@media(max-width:700px){.shell{padding-top:18px}.badge{display:none}.controls{grid-template-columns:1fr 1fr;gap:14px}.card{padding:12px}.card p{font-size:11px;margin-bottom:12px}.primary{padding:11px 20px;min-width:190px}.toolbar{align-items:flex-start}.mobile{display:block}footer{display:block}.progress{margin-top:12px}}
+  </style>
+</head>
+<body data-game-state="loading">
+<main class="shell">
+  <header><div><p class="eyebrow">MIDNIGHT SIEGE / BROWSER EDITION</p><h1>ORPHEUM</h1><p>01 / LAST PICTURE SHOW</p></div><span class="badge">SPRITES × TRUE 3D</span></header>
+  <section class="viewport" id="viewport" aria-label="Игра Orpheum">
+    <canvas id="game" width="1280" height="720" tabindex="0" aria-label="Игровое поле. WASD — движение, мышь — прицел, левая кнопка — огонь."></canvas>
+    <div class="overlay" id="overlay">
+      <div class="card"><p class="eyebrow">THE LAST SHOW STARTS AT MIDNIGHT</p><h2 id="screen-title">ДОБРО ПОЖАЛОВАТЬ<br>В ORPHEUM</h2><p id="screen-copy">Кинотеатр захвачен. Найди жёлтую карту, включи проектор и доберись до служебного выхода.</p><button class="primary" id="start" disabled>ЗАГРУЗКА…</button><progress class="progress" id="progress" max="1" value="0" aria-label="Загрузка игры"></progress><div class="status" id="status" role="status" aria-live="polite">Подготовка WebGL-сборки…</div><p class="mobile">Для игры нужны клавиатура и мышь.</p></div>
+    </div>
+  </section>
+  <div class="toolbar"><span>КЛАВИАТУРА + МЫШЬ · ESC — ПАУЗА И СВОБОДНЫЙ КУРСОР</span><button class="secondary" id="fullscreen">ВО ВЕСЬ ЭКРАН</button></div>
+  <section class="controls" aria-label="Управление"><div><strong>WASD / МЫШЬ</strong><span>Движение и обзор</span></div><div><strong>ЛКМ / R / 1–2</strong><span>Огонь / перезарядка / оружие</span></div><div><strong>E / SPACE / SHIFT</strong><span>Использовать / прыжок / бег</span></div><div><strong>C / F4 / [ ]</strong><span>Присесть / разрешение / чувствительность</span></div></section>
+  <footer><span>ОРИГИНАЛЬНЫЙ РЕТРО FPS · UNITY WEBGL</span><span>Сохраняй патроны. Проверь вентиляцию в туалетах.</span></footer>
+</main>
+<script>
+  (() => {
+    'use strict';
+    const canvas = document.getElementById('game'), overlay = document.getElementById('overlay');
+    const start = document.getElementById('start'), status = document.getElementById('status'), progress = document.getElementById('progress');
+    const heading = document.getElementById('screen-title'), copy = document.getElementById('screen-copy');
+    let instance = null, started = false, ended = false;
+    const gameObject = 'GAME / Last Picture Show';
+    function paused() {
+      if (!instance || ended) return;
+      document.body.dataset.gameState = 'paused'; overlay.hidden = false;
+      if (started) { heading.textContent = 'АНТРАКТ'; copy.textContent = 'Кинотеатр подождёт. Продолжи, когда будешь готов.'; start.textContent = 'ПРОДОЛЖИТЬ'; }
+    }
+    function fail(message) {
+      overlay.hidden = false; document.body.dataset.gameState = 'error'; heading.textContent = 'НЕ УДАЛОСЬ ЗАПУСТИТЬ ИГРУ';
+      copy.textContent = 'Обнови страницу или открой её в настольном браузере с поддержкой WebGL 2.';
+      status.textContent = String(message); start.textContent = 'ПЕРЕЗАГРУЗИТЬ'; start.disabled = false;
+      start.onclick = () => location.reload(); progress.hidden = true;
+    }
+    window.addEventListener('orpheum:state', event => {
+      if (event.detail === 0) { document.body.dataset.gameState = 'playing'; overlay.hidden = true; ended = false; }
+      if (event.detail === 1) paused();
+      if (event.detail === 2 || event.detail === 3) { ended = true; overlay.hidden = true; document.body.dataset.gameState = event.detail === 2 ? 'complete' : 'dead'; }
+    });
+    async function beginPlay() {
+      if (!instance) return;
+      canvas.focus();
+      try {
+        if (document.pointerLockElement !== canvas) await canvas.requestPointerLock();
+        ended = false; started = true;
+        instance.SendMessage(gameObject, 'WebStart');
+      } catch (error) {
+        instance.SendMessage(gameObject, 'WebPause');
+        status.textContent = 'Разреши игре захватить мышь и нажми «Продолжить».';
+        console.warn('Mouse capture: ' + error.message);
+      }
+    }
+    start.addEventListener('click', beginPlay);
+    document.addEventListener('pointerlockchange', () => {
+      if (instance && started && !ended && document.pointerLockElement !== canvas) instance.SendMessage(gameObject, 'WebPause');
+    });
+    window.addEventListener('blur', () => { if (instance && started && !ended) instance.SendMessage(gameObject, 'WebPause'); });
+    canvas.addEventListener('click', () => { if (instance && started && !ended && document.pointerLockElement !== canvas) beginPlay(); });
+    canvas.addEventListener('keydown', event => { if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','F1','F4'].includes(event.code)) event.preventDefault(); });
+    document.getElementById('fullscreen').addEventListener('click', () => {
+      const viewport = document.getElementById('viewport');
+      if (document.fullscreenElement) document.exitFullscreen(); else viewport.requestFullscreen()?.catch(() => { status.textContent = 'Полноэкранный режим недоступен в этом браузере.'; });
+    });
+    const loader = document.createElement('script'); loader.src = 'WebGL.loader.js';
+    loader.onerror = () => fail('Не удалось загрузить файлы игры.');
+    loader.onload = () => createUnityInstance(canvas, {
+      dataUrl: 'WebGL.data.unityweb', frameworkUrl: 'WebGL.framework.js.unityweb', codeUrl: 'WebGL.wasm.unityweb',
+      companyName: 'Orpheum', productName: 'Orpheum - Midnight Siege', productVersion: '0.2',
+      matchWebGLToCanvasSize: true,
+      showBanner: (message, type) => { if (type === 'error') fail(message); else console.warn(message); }
+    }, value => { progress.value = value; status.textContent = 'Загрузка: ' + Math.round(value * 100) + '%'; })
+      .then(game => { instance = game; start.disabled = false; start.textContent = 'ИГРАТЬ'; progress.hidden = true; status.textContent = 'Нажми «Играть», чтобы включить звук и захватить мышь.'; document.body.dataset.gameState = 'ready'; })
+      .catch(fail);
+    document.body.appendChild(loader);
+  })();
+</script>
+</body>
+</html>
